@@ -1,12 +1,16 @@
 /**
- * Supabase browser client
- * Used in Client Components (hooks, event handlers)
- * Credentials are read from environment variables — see .env.example
+ * Supabase browser client. Use in Client Components only.
+ * Returns null until NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set.
  */
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { getSupabasePublicConfig } from '@/lib/config/env';
 
-import { createClient } from '@supabase/supabase-js';
+let browserClient: SupabaseClient | null = null;
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export function getSupabaseBrowserClient(): SupabaseClient | null {
+  if (browserClient) return browserClient;
+  const config = getSupabasePublicConfig();
+  if (!config) return null;
+  browserClient = createClient(config.url, config.anonKey);
+  return browserClient;
+}
