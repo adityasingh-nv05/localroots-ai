@@ -1,121 +1,151 @@
-import Link from 'next/link';
-import { Search, ArrowRight, Leaf } from 'lucide-react';
+import type { Metadata } from 'next';
+import { Heart, Landmark, Sparkles, TrendingUp, Users, type LucideIcon } from 'lucide-react';
+import HeroSection from '@/components/home/HeroSection';
+import CategoryCard from '@/components/home/CategoryCard';
+import BusinessCard from '@/components/home/BusinessCard';
+import ProductCard from '@/components/home/ProductCard';
+import DestinationCard from '@/components/home/DestinationCard';
+import BenefitCard from '@/components/home/BenefitCard';
+import VendorCTA from '@/components/home/VendorCTA';
+import SectionHeading from '@/components/ui/SectionHeading';
+import ScrollRow from '@/components/ui/ScrollRow';
+import DemoBadge from '@/components/ui/DemoBadge';
+import {
+  CATEGORIES,
+  DEMO_NOTE,
+  DESTINATIONS,
+  FEATURED_BUSINESSES,
+  TRENDING_PRODUCTS,
+} from '@/lib/data/demo';
 
-const CATEGORIES = [
-  { label: 'Food & Beverage', emoji: '🍛', href: '/explore?category=food_beverage' },
-  { label: 'Artisan Crafts', emoji: '🪴', href: '/explore?category=artisan_craft' },
-  { label: 'Retail Shops', emoji: '🛍️', href: '/explore?category=retail_shop' },
-  { label: 'Cultural Tourism', emoji: '🏛️', href: '/explore?category=cultural_tourism' },
-  { label: 'Agriculture', emoji: '🌾', href: '/explore?category=agriculture' },
-  { label: 'Homestays', emoji: '🏡', href: '/explore?category=homestay' },
+export const metadata: Metadata = {
+  title: { absolute: 'LocalRoots AI — Discover the Heart of Local India' },
+};
+
+const BENEFITS: { icon: LucideIcon; title: string; description: string }[] = [
+  {
+    icon: Users,
+    title: 'Reach local customers',
+    description: 'Get found by people actively searching for authentic, nearby experiences.',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Grow your visibility',
+    description: 'Give your shop, studio or stall a full profile with photos, story and products.',
+  },
+  {
+    icon: Sparkles,
+    title: 'AI-powered discovery',
+    description: 'Smart search helps the right customers find the right craft, dish or service.',
+  },
+  {
+    icon: Heart,
+    title: 'Keep traditions alive',
+    description: 'Showcase heritage skills and family recipes that deserve a wider audience.',
+  },
 ];
 
-const STATS = [
-  { value: '500+', label: 'Local Businesses' },
-  { value: '30', label: 'Karnataka Districts' },
-  { value: '10k+', label: 'Happy Customers' },
-  { value: 'AI', label: 'Powered Discovery' },
-];
+function DemoNote() {
+  return (
+    <p className="mt-6 flex items-center justify-center gap-2 text-center text-xs text-gray-400">
+      <DemoBadge />
+      <span>{DEMO_NOTE}</span>
+    </p>
+  );
+}
 
 export default function HomePage() {
   return (
     <>
-      {/* ── Hero ────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-amber-50 py-20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-sm font-medium text-green-700">
-              <Leaf size={14} /> Karnataka-first, India-wide
-            </div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-              Discover the{' '}
-              <span className="text-green-700">local roots</span> of{' '}
-              <span className="text-amber-600">India</span>
-            </h1>
-            <p className="mt-6 text-lg text-gray-600 sm:text-xl">
-              AI-powered platform connecting you with local businesses, artisans,
-              food vendors and cultural destinations — starting from Karnataka.
-            </p>
+      <HeroSection />
 
-            {/* Search bar */}
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              <div className="relative w-full max-w-md">
-                <Search
-                  size={18}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  type="search"
-                  placeholder="Search businesses, crafts, food…"
-                  className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-10 pr-4 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
-                />
-              </div>
-              <Link
-                href="/explore"
-                className="flex items-center gap-2 rounded-xl bg-green-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-800 transition-colors whitespace-nowrap"
-              >
-                Explore Now <ArrowRight size={16} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Stats ───────────────────────────────────────────────────── */}
-      <section className="border-y border-gray-100 bg-white py-10">
+      {/* Popular categories */}
+      <section id="categories" className="scroll-mt-20 bg-gray-50 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <dl className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-            {STATS.map(({ value, label }) => (
-              <div key={label} className="text-center">
-                <dt className="text-3xl font-extrabold text-green-700">{value}</dt>
-                <dd className="mt-1 text-sm text-gray-500">{label}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
-
-      {/* ── Categories ──────────────────────────────────────────────── */}
-      <section className="py-16 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl text-center mb-10">
-            Browse by Category
-          </h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {CATEGORIES.map(({ label, emoji, href }) => (
-              <Link
-                key={href}
-                href={href}
-                className="flex flex-col items-center gap-2 rounded-2xl border border-gray-200 bg-white px-4 py-6 text-center shadow-sm hover:border-green-300 hover:shadow-md transition-all group"
-              >
-                <span className="text-3xl">{emoji}</span>
-                <span className="text-xs font-medium text-gray-700 group-hover:text-green-700 transition-colors">
-                  {label}
-                </span>
-              </Link>
+          <SectionHeading
+            eyebrow="Popular categories"
+            title="What are you looking for today?"
+            description="From filter coffee to handwoven silk, browse by what you love."
+          />
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-3 xl:grid-cols-6">
+            {CATEGORIES.map((c) => (
+              <CategoryCard key={c.id} id={c.id} label={c.label} blurb={c.blurb} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Vendor CTA ──────────────────────────────────────────────── */}
-      <section className="py-16 bg-green-700">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-white sm:text-3xl">
-            Own a local business?
-          </h2>
-          <p className="mt-3 text-green-100 sm:text-lg">
-            List your shop, craft studio or food stall and reach thousands of
-            customers across Karnataka and beyond.
-          </p>
-          <Link
-            href="/vendors"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-green-700 shadow-sm hover:bg-green-50 transition-colors"
-          >
-            List Your Business <ArrowRight size={16} />
-          </Link>
+      {/* Featured businesses */}
+      <section id="featured" className="scroll-mt-20 bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            eyebrow="Featured businesses"
+            title="Meet a few local favourites"
+            description="A taste of the kinds of places you can discover on LocalRoots."
+          />
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURED_BUSINESSES.map((b) => (
+              <BusinessCard key={b.id} business={b} />
+            ))}
+          </div>
+          <DemoNote />
         </div>
       </section>
+
+      {/* Explore Karnataka */}
+      <section id="experiences" className="scroll-mt-20 bg-gradient-to-b from-amber-50/60 to-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            eyebrow="Cultural experiences"
+            title="Explore Karnataka"
+            description="Five destinations to start with, each rich in craft, cuisine and history."
+          />
+          <div className="mt-10">
+            <ScrollRow className="md:grid-cols-2 lg:grid-cols-5">
+              {DESTINATIONS.map((d) => (
+                <DestinationCard key={d.slug} destination={d} />
+              ))}
+            </ScrollRow>
+          </div>
+        </div>
+      </section>
+
+      {/* Trending products */}
+      <section id="trending" className="scroll-mt-20 bg-gray-50 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            eyebrow="Trending now"
+            title="Trending local products and artisans"
+            description="Handmade favourites from makers across the state."
+          />
+          <div className="mt-10">
+            <ScrollRow className="md:grid-cols-3">
+              {TRENDING_PRODUCTS.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </ScrollRow>
+          </div>
+          <DemoNote />
+        </div>
+      </section>
+
+      {/* Benefits for business owners */}
+      <section id="benefits" className="scroll-mt-20 bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            eyebrow="For business owners"
+            title="Why local businesses grow with LocalRoots"
+            description="Built for artisans, food makers and small shops that are the heart of their neighbourhoods."
+          />
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {BENEFITS.map((b) => (
+              <BenefitCard key={b.title} icon={b.icon} title={b.title} description={b.description} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <VendorCTA />
     </>
   );
 }
