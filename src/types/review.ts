@@ -1,4 +1,4 @@
-/** Mirrors the `reviews` table. One review per user per business. */
+/** Mirrors the `reviews` table plus the reviewer display name, which comes from get_review_authors(). One review per user per business. */
 export interface Review {
   id: string;
   business_id: string;

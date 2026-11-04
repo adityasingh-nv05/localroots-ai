@@ -1,8 +1,12 @@
 /**
- * Service layer: the only place pages get business data from.
- * Today these functions read SAMPLE_* arrays. When Supabase is connected, replace
- * the function bodies with queries. Pages and components will not need to change.
- * See docs/ARCHITECTURE.md.
+ * The data service used by every page.
+ *
+ * Source selection (see src/lib/config/env.ts):
+ *  - Supabase configured: every call reads the database, with row-level security applied.
+ *  - Not configured, not production: built-in fictional sample data (development only).
+ *  - Not configured, production: throws DataError('unconfigured').
+ *
+ * Supabase code is imported lazily, so sample-only code paths (and the unit tests) never load it.
  */
 import type {
   Business,
@@ -13,62 +17,115 @@ import type {
   VerificationRequest,
   VerificationStatus,
 } from '@/types';
+import { currentDataSource, type DataSource } from '@/lib/config/env';
+import { SAMPLE_BUSINESSES, SAMPLE_CATEGORIES, SAMPLE_PRODUCTS, SAMPLE_REVIEWS, SAMPLE_VERIFICATION_REQUESTS } from '@/lib/data/sample-data';
+import { KARNATAKA_LOCATIONS } from '@/lib/data/locations';
+import { DataError } from './data-error';
+import { countByLocation, filterBusinesses, sortBusinesses } from './business-filter';
 import {
-  SAMPLE_BUSINESSES,
-  SAMPLE_CATEGORIES,
-  SAMPLE_PRODUCTS,
-  SAMPLE_REVIEWS,
-  SAMPLE_VERIFICATION_REQUESTS,
-} from '@/lib/data/sample-data';
+  rowToBusiness,
+  rowToCategory,
+  rowToProduct,
+  rowToReview,
+  rowToVerificationRequest,
+} from '@/lib/supabase/mappers';
 
-const norm = (value: string) => value.trim().toLowerCase();
+export { sortBusinesses };
 
-function sameText(a: string, b: string): boolean {
-  return norm(a) === norm(b);
+export interface DataSourceInfo {
+  source: DataSource;
+}
+
+export function getDataSourceInfo(): DataSourceInfo {
+  return { source: currentDataSource() };
+}
+
+/** Returns the active source, or throws when production has no database configured. */
+function activeSource(): 'supabase' | 'sample' {
+  const source = currentDataSource();
+  if (source === 'unconfigured') {
+    throw new DataError(
+      'Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.',
+      'unconfigured',
+    );
+  }
+  return source;
+}
+
+async function loadRepository() {
+  return import('@/lib/supabase/repository');
+}
+
+async function loadCatalog(): Promise<{ businesses: Business[]; products: Product[] }> {
+  if (activeSource() === 'sample') {
+    return { businesses: SAMPLE_BUSINESSES.filter((b) => b.is_active), products: SAMPLE_PRODUCTS };
+  }
+  const repo = await loadRepository();
+  const [rows, productRows] = await Promise.all([repo.fetchActiveBusinesses(), repo.fetchProducts()]);
+  return {
+    businesses: rows.map(rowToBusiness),
+    products: productRows.map(rowToProduct),
+  };
 }
 
 export async function listBusinesses(filters: BusinessFilters = {}): Promise<Business[]> {
-  const terms = filters.query ? norm(filters.query).split(/\s+/).filter(Boolean) : [];
+  const catalog = await loadCatalog();
+  return filterBusinesses(catalog.businesses, catalog.products, filters);
+}
 
-  return SAMPLE_BUSINESSES.filter((b) => {
-    if (!b.is_active) return false;
-
-    if (terms.length > 0) {
-      const haystack = norm([b.name, b.description, b.city, b.district, b.state, ...b.tags].join(' '));
-      if (!terms.every((t) => haystack.includes(t))) return false;
-    }
-    if (filters.category && b.category !== filters.category) return false;
-    if (filters.state && !sameText(b.state, filters.state)) return false;
-    if (filters.district && !sameText(b.district, filters.district)) return false;
-    if (filters.city && !sameText(b.city, filters.city)) return false;
-    if (filters.verifiedOnly && b.verification_status !== 'verified') return false;
-    if (filters.minRating !== undefined && b.rating_average < filters.minRating) return false;
-
-    return true;
-  }).sort((a, b) => b.rating_average - a.rating_average);
+export async function getLocationCounts(): Promise<Record<string, number>> {
+  const catalog = await loadCatalog();
+  const counts = countByLocation(catalog.businesses);
+  // Make sure every location chip has a number, even when a location has no listings.
+  for (const loc of KARNATAKA_LOCATIONS) counts[loc.slug] ??= 0;
+  return counts;
 }
 
 export async function getBusinessBySlug(slug: string): Promise<Business | null> {
-  return SAMPLE_BUSINESSES.find((b) => b.slug === slug && b.is_active) ?? null;
+  if (activeSource() === 'sample') {
+    return SAMPLE_BUSINESSES.find((b) => b.slug === slug && b.is_active) ?? null;
+  }
+  const repo = await loadRepository();
+  const row = await repo.fetchBusinessRowBySlug(slug);
+  return row ? rowToBusiness(row) : null;
 }
 
 export async function getProductsForBusiness(businessId: string): Promise<Product[]> {
-  return SAMPLE_PRODUCTS.filter((p) => p.business_id === businessId);
+  if (activeSource() === 'sample') {
+    return SAMPLE_PRODUCTS.filter((p) => p.business_id === businessId);
+  }
+  const repo = await loadRepository();
+  const rows = await repo.fetchProductsForBusiness(businessId);
+  return rows.map(rowToProduct);
 }
 
 export async function getReviewsForBusiness(businessId: string): Promise<Review[]> {
-  return SAMPLE_REVIEWS.filter((r) => r.business_id === businessId);
+  if (activeSource() === 'sample') {
+    return SAMPLE_REVIEWS.filter((r) => r.business_id === businessId);
+  }
+  const repo = await loadRepository();
+  const rows = await repo.fetchReviewRows(businessId);
+  const names = await repo.fetchReviewAuthorNames(rows.map((r) => r.user_id));
+  return rows.map((r) => rowToReview(r, names));
 }
 
 export async function getCategories(): Promise<Category[]> {
-  return SAMPLE_CATEGORIES;
+  if (activeSource() === 'sample') return SAMPLE_CATEGORIES;
+  const repo = await loadRepository();
+  const rows = await repo.fetchCategoryRows();
+  return rows.map(rowToCategory);
 }
 
-/** Admin queue. Passing a status narrows the list. */
+/** Admin queue. Passing a status narrows the list. RLS returns nothing to non-admins. */
 export async function listVerificationRequests(
   status?: VerificationStatus,
 ): Promise<VerificationRequest[]> {
-  return SAMPLE_VERIFICATION_REQUESTS.filter((r) => !status || r.status === status);
+  if (activeSource() === 'sample') {
+    return SAMPLE_VERIFICATION_REQUESTS.filter((r) => !status || r.status === status);
+  }
+  const repo = await loadRepository();
+  const rows = await repo.fetchVerificationRows(status);
+  return rows.map(rowToVerificationRequest);
 }
 
 export function businessPath(slug: string): string {

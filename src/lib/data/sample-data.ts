@@ -1,7 +1,8 @@
 /**
  * SAMPLE DATA FOR TESTING ONLY.
- * Business names, addresses, people and reviews are fictional. Nothing here is a
- * real or verified listing. Every business is 'unverified' or 'pending' on purpose.
+ * Business names, addresses, people, reviews and images are fictional. Nothing here is
+ * a real or verified listing. Images are generated illustrations in /public/samples.
+ * Verification is 'unverified' or 'pending' on purpose; no sample is verified.
  */
 import type { Business, Category, CategorySlug, Product, Review, VerificationRequest } from '@/types';
 import { CATEGORY_LABELS } from './categories';
@@ -20,6 +21,11 @@ export const SAMPLE_CATEGORIES: Category[] = CATEGORY_ORDER.map((slug, index) =>
 
 const BASE_TIME = '2026-01-10T00:00:00Z';
 
+/** Two generated illustrations per business, matching files in public/samples. */
+function sampleImages(slug: string): string[] {
+  return [`/samples/${slug}-1.svg`, `/samples/${slug}-2.svg`];
+}
+
 type RequiredBusinessFields = Pick<
   Business,
   'id' | 'slug' | 'name' | 'description' | 'category' | 'city' | 'district' | 'state'
@@ -34,7 +40,7 @@ function makeBusiness(partial: RequiredBusinessFields & Partial<Business>): Busi
     pincode: null,
     latitude: null,
     longitude: null,
-    images: [],
+    images: sampleImages(partial.slug),
     website_url: null,
     instagram_handle: null,
     facebook_url: null,
@@ -160,95 +166,75 @@ export const SAMPLE_BUSINESSES: Business[] = [
     rating_average: 4.2,
     rating_count: 15,
   }),
+  makeBusiness({
+    id: 'biz-008',
+    slug: 'mangaluru-seafood-kitchen',
+    name: 'Mangaluru Seafood Kitchen',
+    description: 'Coastal seafood thalis and fish curry prepared with local spices. Sample listing.',
+    category: 'food',
+    tags: ['seafood', 'coastal', 'thali'],
+    state: 'Karnataka',
+    district: 'Dakshina Kannada',
+    city: 'Mangaluru',
+    latitude: 12.9141,
+    longitude: 74.856,
+    rating_average: 4.5,
+    rating_count: 58,
+  }),
+  makeBusiness({
+    id: 'biz-009',
+    slug: 'hubballi-organic-farm-shop',
+    name: 'Hubballi Organic Farm Shop',
+    description: 'Stone-ground millet flour and seasonal vegetables from nearby farms. Sample listing.',
+    category: 'agriculture',
+    tags: ['organic', 'millet flour', 'farm produce'],
+    state: 'Karnataka',
+    district: 'Dharwad',
+    city: 'Hubballi',
+    latitude: 15.3647,
+    longitude: 75.124,
+    rating_average: 4.1,
+    rating_count: 22,
+  }),
+  makeBusiness({
+    id: 'biz-010',
+    slug: 'bengaluru-craft-lab-accessories',
+    name: 'Bengaluru Craft Lab Accessories',
+    description: 'Hand-stitched bags and jewellery made by a small studio team. Sample listing.',
+    category: 'accessories',
+    tags: ['bags', 'jewellery', 'handmade'],
+    state: 'Karnataka',
+    district: 'Bengaluru Urban',
+    city: 'Bengaluru',
+    latitude: 12.9352,
+    longitude: 77.6245,
+    rating_average: 4.4,
+    rating_count: 36,
+  }),
 ];
 
 export const SAMPLE_PRODUCTS: Product[] = [
-  {
-    id: 'prod-001',
-    business_id: 'biz-001',
-    name: 'Filter Coffee Powder, 250 g',
-    description: 'Sample product: medium roast chicory blend.',
-    category: 'food',
-    price_inr: 320,
-    image_url: null,
-    is_available: true,
-    created_at: BASE_TIME,
-  },
-  {
-    id: 'prod-002',
-    business_id: 'biz-003',
-    name: 'Handloom Silk Saree',
-    description: 'Sample product: plain silk saree with contrast border.',
-    category: 'fashion',
-    price_inr: 4200,
-    image_url: null,
-    is_available: true,
-    created_at: BASE_TIME,
-  },
-  {
-    id: 'prod-003',
-    business_id: 'biz-004',
-    name: 'Brass Diya Set',
-    description: 'Sample product: set of three hand-finished diyas.',
-    category: 'handicrafts',
-    price_inr: 1100,
-    image_url: null,
-    is_available: false,
-    created_at: BASE_TIME,
-  },
+  { id: 'prod-001', business_id: 'biz-001', name: 'Filter Coffee Powder, 250 g', description: 'Sample product: medium roast chicory blend.', kind: 'product', category: 'food', price_inr: 320, image_url: null, is_available: true, created_at: BASE_TIME },
+  { id: 'prod-002', business_id: 'biz-001', name: 'Filter Coffee Breakfast Plate', description: 'Sample service-style meal: idli, vada and filter coffee.', kind: 'product', category: 'food', price_inr: 120, image_url: null, is_available: true, created_at: BASE_TIME },
+  { id: 'prod-003', business_id: 'biz-002', name: 'Millet Meal Catering', description: 'Sample service: group millet lunches for events, booked in advance.', kind: 'service', category: 'food', price_inr: 250, image_url: null, is_available: true, created_at: BASE_TIME },
+  { id: 'prod-004', business_id: 'biz-003', name: 'Handloom Silk Saree', description: 'Sample product: plain silk saree with contrast border.', kind: 'product', category: 'fashion', price_inr: 4200, image_url: null, is_available: true, created_at: BASE_TIME },
+  { id: 'prod-005', business_id: 'biz-004', name: 'Brass Diya Set', description: 'Sample product: set of three hand-finished diyas.', kind: 'product', category: 'handicrafts', price_inr: 1100, image_url: null, is_available: false, created_at: BASE_TIME },
+  { id: 'prod-006', business_id: 'biz-005', name: 'Half-day Estate Walk', description: 'Sample service: guided walk with a tasting session. Starting price.', kind: 'service', category: 'tourism', price_inr: 1200, image_url: null, is_available: true, created_at: BASE_TIME },
+  { id: 'prod-007', business_id: 'biz-006', name: 'Custom Stitching', description: 'Sample service: made-to-measure stitching. Starting price.', kind: 'service', category: 'services', price_inr: 500, image_url: null, is_available: true, created_at: BASE_TIME },
+  { id: 'prod-008', business_id: 'biz-008', name: 'Coastal Masala Spice Pack', description: 'Sample product: ground masala for fish curry.', kind: 'product', category: 'food', price_inr: 180, image_url: null, is_available: true, created_at: BASE_TIME },
+  { id: 'prod-009', business_id: 'biz-009', name: 'Stone-ground Millet Flour, 1 kg', description: 'Sample product: ragi and jowar flour.', kind: 'product', category: 'agriculture', price_inr: 120, image_url: null, is_available: true, created_at: BASE_TIME },
+  { id: 'prod-010', business_id: 'biz-010', name: 'Hand-stitched Jute Tote', description: 'Sample product: everyday tote with leather handles.', kind: 'product', category: 'accessories', price_inr: 950, image_url: null, is_available: true, created_at: BASE_TIME },
 ];
 
 export const SAMPLE_REVIEWS: Review[] = [
-  {
-    id: 'rev-001',
-    business_id: 'biz-001',
-    user_id: 'user-demo-1',
-    user_name: 'Demo Reviewer A',
-    rating: 5,
-    comment: 'Sample review: the filter coffee was excellent.',
-    created_at: BASE_TIME,
-  },
-  {
-    id: 'rev-002',
-    business_id: 'biz-001',
-    user_id: 'user-demo-2',
-    user_name: 'Demo Reviewer B',
-    rating: 4,
-    comment: 'Sample review: friendly staff and quick service.',
-    created_at: BASE_TIME,
-  },
-  {
-    id: 'rev-003',
-    business_id: 'biz-005',
-    user_id: 'user-demo-3',
-    user_name: 'Demo Reviewer C',
-    rating: 5,
-    comment: 'Sample review: the guide explained the plantation process clearly.',
-    created_at: BASE_TIME,
-  },
+  { id: 'rev-001', business_id: 'biz-001', user_id: 'user-demo-1', user_name: 'Demo Reviewer A', rating: 5, comment: 'Sample review: the filter coffee was excellent.', created_at: BASE_TIME },
+  { id: 'rev-002', business_id: 'biz-001', user_id: 'user-demo-2', user_name: 'Demo Reviewer B', rating: 4, comment: 'Sample review: friendly staff and quick service.', created_at: BASE_TIME },
+  { id: 'rev-003', business_id: 'biz-005', user_id: 'user-demo-3', user_name: 'Demo Reviewer C', rating: 5, comment: 'Sample review: the guide explained the plantation process clearly.', created_at: BASE_TIME },
+  { id: 'rev-004', business_id: 'biz-008', user_id: 'user-demo-4', user_name: 'Demo Reviewer D', rating: 4, comment: 'Sample review: the thali was generous and well spiced.', created_at: BASE_TIME },
+  { id: 'rev-005', business_id: 'biz-008', user_id: 'user-demo-5', user_name: 'Demo Reviewer E', rating: 5, comment: 'Sample review: the fish curry was the highlight.', created_at: BASE_TIME },
 ];
 
 export const SAMPLE_VERIFICATION_REQUESTS: VerificationRequest[] = [
-  {
-    id: 'ver-001',
-    business_id: 'biz-001',
-    submitted_by: null,
-    status: 'pending',
-    document_path: null,
-    reviewer_notes: null,
-    reviewed_by: null,
-    created_at: BASE_TIME,
-    reviewed_at: null,
-  },
-  {
-    id: 'ver-002',
-    business_id: 'biz-005',
-    submitted_by: null,
-    status: 'pending',
-    document_path: null,
-    reviewer_notes: null,
-    reviewed_by: null,
-    created_at: BASE_TIME,
-    reviewed_at: null,
-  },
+  { id: 'ver-001', business_id: 'biz-001', submitted_by: null, status: 'pending', document_path: null, reviewer_notes: null, reviewed_by: null, created_at: BASE_TIME, reviewed_at: null },
+  { id: 'ver-002', business_id: 'biz-005', submitted_by: null, status: 'pending', document_path: null, reviewer_notes: null, reviewed_by: null, created_at: BASE_TIME, reviewed_at: null },
 ];

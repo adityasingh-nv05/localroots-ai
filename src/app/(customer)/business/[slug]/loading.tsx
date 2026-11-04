@@ -7,7 +7,7 @@ export default function BusinessLoading() {
       <Skeleton className="mt-6 h-4 w-24" />
       <Skeleton className="mt-3 h-10 w-2/3" />
       <Skeleton className="mt-4 h-4 w-1/2" />
-      <Skeleton className="mt-8 h-56 w-full rounded-2xl" />
+      <Skeleton className="mt-8 h-72 w-full rounded-2xl" />
       <Skeleton className="mt-10 h-32 w-full rounded-2xl" />
     </div>
   );

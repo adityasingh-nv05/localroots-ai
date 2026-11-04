@@ -58,3 +58,9 @@ Before going live, test with two real accounts and the anon key:
 
 ## Changing the schema
 Add a new file such as `0002_<change>.sql`. Never edit `0001_init.sql` after it has been applied to a real project.
+
+## Migration history
+- `0001_init.sql`: original schema, triggers and policies.
+- `0002_security_and_schema_fixes.sql`: adds `products.kind`, prevents clients from setting verification or ratings, restricts verification requests to owners, restricts reviews to active businesses, adds `get_review_authors()`, and removes API access to internal functions. Run after 0001. See `docs/SUPABASE_SETUP.md`.
+
+Column names versus app names: the database uses `category_slug`; the app uses `category`. `products.category_slug` is likewise mapped to `category`. Reviewer names are not stored on the review row; they come from `get_review_authors()`.

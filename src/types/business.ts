@@ -1,7 +1,7 @@
 import type { CategorySlug } from './category';
 import type { VerificationStatus } from './verification';
 
-/** Mirrors the `businesses` table. Field names match the database columns. */
+/** Mirrors the `businesses` table. The database column `category_slug` is exposed here as `category` (see supabase/mappers.ts). */
 export interface Business {
   id: string;
   slug: string;
@@ -65,12 +65,24 @@ export type BusinessDraft = Pick<
   | 'contact_email'
 >;
 
+/** 'popular' = most reviews first; 'rating' = highest average first. */
+export const BUSINESS_SORTS = ['popular', 'rating'] as const;
+export type BusinessSort = (typeof BUSINESS_SORTS)[number];
+
+export function isBusinessSort(value: string): value is BusinessSort {
+  return (BUSINESS_SORTS as readonly string[]).includes(value);
+}
+
 export interface BusinessFilters {
+  /** Free text: matches name, description, tags, category, city, district, products and services. */
   query?: string;
   category?: CategorySlug;
+  /** Karnataka location slug from data/locations.ts, e.g. 'mysuru'. */
+  location?: string;
   state?: string;
   district?: string;
   city?: string;
   verifiedOnly?: boolean;
   minRating?: number;
+  sort?: BusinessSort;
 }

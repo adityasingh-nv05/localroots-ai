@@ -1,8 +1,17 @@
 import Link from 'next/link';
+import { Heart } from 'lucide-react';
 import BusinessListingCard from '@/components/business/BusinessListingCard';
+import ExploreFilters from '@/components/explore/ExploreFilters';
+import LocationChips from '@/components/explore/LocationChips';
+import DataSourceNotice from '@/components/ui/DataSourceNotice';
 import EmptyState from '@/components/ui/EmptyState';
-import { getCategories, listBusinesses } from '@/lib/services/business-service';
-import { isCategorySlug, type BusinessFilters } from '@/types';
+import { KARNATAKA_LOCATIONS, findKarnatakaLocation } from '@/lib/data/locations';
+import {
+  getCategories,
+  getLocationCounts,
+  listBusinesses,
+} from '@/lib/services/business-service';
+import { isBusinessSort, isCategorySlug, type BusinessFilters } from '@/types';
 
 export const metadata = { title: 'Explore' };
 
@@ -20,62 +29,78 @@ function firstValue(value: SearchParamValue): string {
 
 export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const params = await searchParams;
-  const query = firstValue(params.q);
-  const categoryParam = firstValue(params.category);
-  const category = isCategorySlug(categoryParam) ? categoryParam : undefined;
 
-  const filters: BusinessFilters = { query: query || undefined, category };
-  const [businesses, categories] = await Promise.all([listBusinesses(filters), getCategories()]);
+  const q = firstValue(params.q);
+  const categoryParam = firstValue(params.category);
+  const locationParam = firstValue(params.location);
+  const sortParam = firstValue(params.sort);
+
+  // Unknown values are ignored rather than causing errors.
+  const category = isCategorySlug(categoryParam) ? categoryParam : undefined;
+  const location = findKarnatakaLocation(locationParam)?.slug;
+  const sort = isBusinessSort(sortParam) ? sortParam : 'popular';
+
+  const filters: BusinessFilters = { query: q || undefined, category, location, sort };
+
+  const [businesses, categories, counts] = await Promise.all([
+    listBusinesses(filters),
+    getCategories(),
+    getLocationCounts(),
+  ]);
+
+  const activeLocation = findKarnatakaLocation(location);
+  const keep = { q, category: category ?? '', sort };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Explore Local Businesses</h1>
-        <p className="mt-2 text-gray-500">Find artisans, shops, food vendors and more across Karnataka.</p>
+      <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Explore Local Businesses</h1>
+          <p className="mt-2 text-gray-500">Find artisans, shops, food vendors and more across Karnataka.</p>
+        </div>
+        <Link
+          href="/favorites"
+          className="inline-flex items-center gap-2 self-start rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-rose-200 hover:text-rose-600"
+        >
+          <Heart size={16} aria-hidden="true" /> Saved businesses
+        </Link>
       </header>
 
-      <form action="/explore" method="get" className="mb-8 grid gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:grid-cols-[1fr_220px_auto]">
-        <label className="sr-only" htmlFor="q">Search businesses</label>
-        <input
-          id="q"
-          name="q"
-          type="search"
-          defaultValue={query}
-          placeholder="Search by name, product or place"
-          className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
-        />
-        <label className="sr-only" htmlFor="category">Category</label>
-        <select
-          id="category"
-          name="category"
-          defaultValue={category ?? ''}
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
-        >
-          <option value="">All categories</option>
-          {categories.map((c) => (
-            <option key={c.slug} value={c.slug}>{c.name}</option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          className="rounded-lg bg-green-700 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-800"
-        >
-          Apply
-        </button>
-      </form>
+      <DataSourceNotice />
 
-      <p className="mb-4 text-sm text-gray-500" aria-live="polite">
-        {businesses.length} {businesses.length === 1 ? 'listing' : 'listings'} found
-        <span className="text-gray-400"> · sample data</span>
+      <section aria-labelledby="karnataka-heading" className="mb-8 space-y-3">
+        <h2 id="karnataka-heading" className="text-sm font-semibold uppercase tracking-wide text-amber-700">
+          Explore Karnataka
+        </h2>
+        <LocationChips
+          locations={KARNATAKA_LOCATIONS}
+          counts={counts}
+          activeSlug={location}
+          keep={keep}
+        />
+      </section>
+
+      <div className="mb-8">
+        <ExploreFilters
+          values={{ q, category: category ?? '', location: location ?? '', sort }}
+          categories={categories}
+          locations={KARNATAKA_LOCATIONS}
+        />
+      </div>
+
+      <p className="mb-6 text-sm text-gray-500" aria-live="polite">
+        {businesses.length} {businesses.length === 1 ? 'listing' : 'listings'}
+        {activeLocation && <> in {activeLocation.name}</>}
+        {q && <> matching &ldquo;{q}&rdquo;</>}
       </p>
 
       {businesses.length === 0 ? (
         <EmptyState
-          title="No listings match your search"
-          description="Try a different keyword or clear the filters to see everything."
+          title="No listings match your filters"
+          description="Try a different keyword, another location, or reset the filters to see everything."
           action={
             <Link href="/explore" className="rounded-lg bg-green-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-800">
-              Clear filters
+              Reset filters
             </Link>
           }
         />
