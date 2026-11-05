@@ -15,3 +15,9 @@ insert into public.categories (slug, name, description, sort_order) values
   ('agriculture', 'Agriculture', 'Farm produce and agricultural goods', 7),
   ('homestay', 'Homestays', 'Stays hosted by local families', 8)
 on conflict (slug) do nothing;
+
+-- Country reference row. India is a fact. Its states, districts, cities, localities and PIN
+-- codes must come from an authoritative source (see docs/GEOGRAPHY.md), not from this file.
+insert into public.countries (iso_code, name, is_published) values
+  ('IN', 'India', true)
+on conflict (iso_code) do nothing;

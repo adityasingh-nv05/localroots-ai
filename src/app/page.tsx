@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Heart, Landmark, Sparkles, TrendingUp, Users, type LucideIcon } from 'lucide-react';
+import { Heart, Sparkles, TrendingUp, Users, type LucideIcon } from 'lucide-react';
 import HeroSection from '@/components/home/HeroSection';
 import CategoryCard from '@/components/home/CategoryCard';
 import BusinessCard from '@/components/home/BusinessCard';

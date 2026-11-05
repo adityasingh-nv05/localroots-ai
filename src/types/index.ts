@@ -3,6 +3,7 @@ export * from './api';
 export * from './ai-task';
 export * from './business';
 export * from './category';
+export * from './geography';
 export * from './location';
 export * from './product';
 export * from './review';

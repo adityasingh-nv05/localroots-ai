@@ -1,0 +1,8 @@
+S.No.,State Code,State Version,State Name (In English),State Name (In Local),Census 2001 Code,Census 2011 Code,State or UT
+1,ABC,1,TEST Alpha,,0,0,S
+2,91,1,TEST Beta,,0,0,X
+3,92,1,,,0,0,S
+4,93,1,TEST Delta,,0,0,U
+5,93,1,TEST Delta Other,,0,0,U
+6,94,1,test  delta,,0,0,S
+7,95,1,TEST Epsilon,,0,0

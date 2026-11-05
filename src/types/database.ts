@@ -23,6 +23,12 @@ export interface BusinessRow {
   pincode: string | null;
   latitude: number | null;
   longitude: number | null;
+  country_id?: string | null;
+  state_id?: string | null;
+  district_id?: string | null;
+  city_id?: string | null;
+  locality_id?: string | null;
+  pincode_id?: string | null;
   images: string[];
   website_url: string | null;
   instagram_handle: string | null;

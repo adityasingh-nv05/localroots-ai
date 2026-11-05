@@ -1,0 +1,8 @@
+S.No.,State Code,State Name (In English),District Code,District Name(In English),Census 2001 Code,Census 2011 Code
+1,999,TEST Missing Parent,9001,TEST Orphan District,0,0
+2,35,TEST,ABC,TEST Bad Code District,0,0
+3,35,TEST,9002,,0,0
+4,35,TEST,9003,TEST Same Name,0,0
+5,35,TEST,9004,test  same name,0,0
+6,35,TEST,9005,TEST Only Valid,0,0
+7,35,TEST,9006

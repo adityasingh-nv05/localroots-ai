@@ -1,0 +1,108 @@
+{
+  "source": "LGD",
+  "snapshot": "04Nov2026",
+  "licence": "Government Open Data License - India (GODL-India)",
+  "attribution": "Source: Local Government Directory (LGD), Ministry of Panchayati Raj, Government of India (https://lgdirectory.gov.in/). Licensed under the Government Open Data License - India. Snapshot: 4 November 2026, obtained via ramSeraph/opendata (lgd-latest).",
+  "inputs": [
+    {
+      "role": "states",
+      "file": "states-excerpt.csv",
+      "rows_read": 2,
+      "sha256": "fcbe59a26537e45d484077a31f8b6ef24ef9aed32b41c72efd3bf3b21a6bc213",
+      "unchanged_during_run": true
+    },
+    {
+      "role": "districts",
+      "file": "districts-excerpt.csv",
+      "rows_read": 2,
+      "sha256": "58dade494481c855bc50ee1d6f4c2bdd16bf2eb7e88ccc589c59dd2f71e973ea",
+      "unchanged_during_run": true
+    }
+  ],
+  "archive_checks": {
+    "states": {
+      "checked": false
+    },
+    "districts": {
+      "checked": false
+    }
+  },
+  "counts": {
+    "states": {
+      "read": 2,
+      "accepted": 2,
+      "rejected": 0,
+      "kinds": {
+        "state": 1,
+        "union_territory": 1
+      }
+    },
+    "districts": {
+      "read": 2,
+      "accepted": 2,
+      "rejected": 0
+    }
+  },
+  "expected_insertions": {
+    "states": 2,
+    "districts": 2,
+    "cities": 0,
+    "localities": 0,
+    "pincodes": 0
+  },
+  "existing_record_matches": {
+    "checked": false,
+    "reason": "The dry run has no database access, so matches against existing rows are unknown."
+  },
+  "rejections_by_category": {
+    "malformed_row": 0,
+    "invalid_value": 0,
+    "duplicate": 0,
+    "missing_parent": 0
+  },
+  "rejected": [],
+  "parent_checks": {
+    "districts_checked": 2,
+    "districts_missing_parent": 0,
+    "states_without_districts": [
+      "28"
+    ]
+  },
+  "published_totals": {
+    "expected": {
+      "states": 36,
+      "districts": 790
+    },
+    "actual": {
+      "states": 2,
+      "districts": 2
+    },
+    "matches": {
+      "states": false,
+      "districts": false
+    }
+  },
+  "outputs": [
+    {
+      "file": "states.normalised.csv",
+      "rows": 2,
+      "sha256": "6cc53281de34f26871a1f29f66a503e565f486241a272f69fa466cd1f67b46de"
+    },
+    {
+      "file": "districts.normalised.csv",
+      "rows": 2,
+      "sha256": "72e89b1bba35f951eab0791f64614852a1978ff85b152ef7b528dd40c51a3105"
+    },
+    {
+      "file": "lgd-crosswalk.csv",
+      "rows": 4,
+      "sha256": "9c7bd3be6c138cf925c88a7d853d2989b3d43b1f3988c0759c758689f7a41437"
+    }
+  ],
+  "database": {
+    "accessed": false,
+    "sql_executed": false,
+    "records_written": 0
+  },
+  "deterministic": "Contains no timestamps or absolute paths. Output depends only on input bytes and config."
+}

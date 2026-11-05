@@ -76,7 +76,6 @@ export default function SearchBar({ className = '' }: { className?: string }) {
             }}
             onFocus={() => setOpen(true)}
             onKeyDown={handleKeyDown}
-            aria-expanded={showPanel}
             aria-controls="search-results"
             autoComplete="off"
             className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-10 pr-4 text-sm shadow-sm transition focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"

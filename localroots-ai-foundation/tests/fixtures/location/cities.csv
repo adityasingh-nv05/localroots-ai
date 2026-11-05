@@ -1,0 +1,3 @@
+external_id,name,district_external_id,kind,latitude,longitude
+SAMPLE-C1,Sample City Alpha,SAMPLE-D1,city,,
+SAMPLE-C2,Sample Town Beta,SAMPLE-D2,town,,

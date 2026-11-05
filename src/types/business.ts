@@ -20,6 +20,14 @@ export interface Business {
   latitude: number | null;
   longitude: number | null;
 
+  // Links to the geography tables (migration 0004). Optional until linked.
+  country_id?: string | null;
+  state_id?: string | null;
+  district_id?: string | null;
+  city_id?: string | null;
+  locality_id?: string | null;
+  pincode_id?: string | null;
+
   // Media and links
   images: string[];
   website_url: string | null;

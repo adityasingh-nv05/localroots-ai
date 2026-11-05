@@ -1,0 +1,4 @@
+external_id,name,state_external_id,code,latitude,longitude
+SAMPLE-D1,Sample District One,SAMPLE-S1,,,
+SAMPLE-D2,Sample District Two,SAMPLE-S1,,,
+SAMPLE-D3,Sample District Three,SAMPLE-S2,,,

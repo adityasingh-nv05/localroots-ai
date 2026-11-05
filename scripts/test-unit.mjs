@@ -18,11 +18,11 @@ const projectRoot = process.cwd();
 const work = mkdtempSync(join(tmpdir(), 'localroots-unit-'));
 const srcDir = join(work, 'src');
 
-function walk(dir, out = []) {
+function walk(dir, extensions = ['.ts'], out = []) {
   for (const entry of readdirSync(dir)) {
     const full = join(dir, entry);
-    if (statSync(full).isDirectory()) walk(full, out);
-    else if (full.endsWith('.ts')) out.push(full);
+    if (statSync(full).isDirectory()) walk(full, extensions, out);
+    else if (extensions.some((ext) => full.endsWith(ext))) out.push(full);
   }
   return out;
 }
@@ -48,6 +48,9 @@ const IMPORT_RE = /((?:\bfrom|\bimport)\s*\(?\s*)(['"])([^'"]+)\2/g;
 try {
   cpSync(join(projectRoot, 'src'), srcDir, { recursive: true });
   cpSync(join(projectRoot, 'tests'), join(work, 'tests'), { recursive: true });
+  if (existsSync(join(projectRoot, 'localroots-location'))) {
+    cpSync(join(projectRoot, 'localroots-location'), join(work, 'localroots-location'), { recursive: true });
+  }
   if (existsSync(join(projectRoot, 'public'))) {
     cpSync(join(projectRoot, 'public'), join(work, 'public'), { recursive: true });
   }
@@ -61,7 +64,7 @@ try {
     if (rewritten !== source) writeFileSync(file, rewritten);
   }
 
-  const testFiles = walk(join(work, 'tests')).filter((f) => f.endsWith('.test.ts'));
+  const testFiles = walk(join(work, 'tests'), ['.ts', '.mjs']).filter((f) => f.endsWith('.test.ts') || f.endsWith('.test.mjs'));
   if (testFiles.length === 0) {
     console.error('No *.test.ts files found in tests/.');
     process.exit(1);

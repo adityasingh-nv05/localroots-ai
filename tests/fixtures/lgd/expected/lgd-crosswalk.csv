@@ -1,0 +1,5 @@
+entity,lgd_code,lgd_parent_code,name_raw,name_normalised,state_or_ut,census_2001_code,census_2011_code,source_line
+states,28,,Andhra Pradesh,Andhra Pradesh,S,28,28,3
+states,35,,Andaman And Nicobar Islands,Andaman And Nicobar Islands,U,35,35,2
+districts,603,35,Nicobars,Nicobars,,2,638,2
+districts,632,35,North And Middle Andaman,North And Middle Andaman,,0,639,3

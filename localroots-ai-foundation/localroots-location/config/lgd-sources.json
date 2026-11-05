@@ -1,0 +1,14 @@
+{
+  "source": "LGD",
+  "authority": "Ministry of Panchayati Raj, Government of India: Local Government Directory",
+  "homepage": "https://lgdirectory.gov.in/",
+  "mirror": "https://github.com/ramSeraph/opendata/releases/tag/lgd-latest",
+  "snapshot": "04Nov2026",
+  "licence": "Government Open Data License - India (GODL-India)",
+  "attribution": "Source: Local Government Directory (LGD), Ministry of Panchayati Raj, Government of India (https://lgdirectory.gov.in/). Licensed under the Government Open Data License - India. Snapshot: 4 November 2026, obtained via ramSeraph/opendata (lgd-latest).",
+  "archives": {
+    "states": { "file": "states.04Nov2026.csv.7z", "sha256": "c6a67e4de9c3ecd3c13d3d8ff5cf8418822f83b4007b83e62a269b1d08c0311b" },
+    "districts": { "file": "districts.04Nov2026.csv.7z", "sha256": "7f0cdc9cc5d85b0af7d5c1ec2beb07a0137434d75e9c6fc178f2045815087884" }
+  },
+  "expectedCounts": { "states": 36, "statesStates": 28, "statesUnionTerritories": 8, "districts": 790 }
+}

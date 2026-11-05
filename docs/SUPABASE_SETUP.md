@@ -35,7 +35,8 @@ Open **SQL Editor** in the Supabase dashboard, then **New query**. Run each file
 1. **`supabase/migrations/0001_init.sql`**, only if you have not run it before. It creates the tables, functions, triggers and policies.
 2. **`supabase/migrations/0002_security_and_schema_fixes.sql`**. Adds `products.kind` and the security fixes. Safe to run after 0001 and safe to re-run.
 3. **`supabase/migrations/0003_roles_and_membership.sql`**. Adds business membership, admin assignment only through trusted paths, and vendor registration functions. Safe to re-run.
-4. **`supabase/seed.sql`**. Inserts the eight category rows. It inserts no businesses.
+4. **`supabase/migrations/0004_geography.sql`**. Adds the India-wide location hierarchy and links businesses to it. Creates no location records. See `docs/GEOGRAPHY.md`.
+5. **`supabase/seed.sql`**. Inserts the eight category rows and the India country row. It inserts no businesses or other location records.
 
 Each run should finish with "Success. No rows returned" or similar.
 
